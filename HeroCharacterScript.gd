@@ -2,9 +2,9 @@ extends CharacterBody2D
 
 @onready var CAMERA = $Camera2D
 
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
+const SPEED = 150.0
 const VELOCITY = Vector2()
+var sprint_multiplier = 2.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -21,6 +21,13 @@ func _process(delta):
 	if Input.is_action_pressed("ui_up"):
 		velocity.y -= 1
 		
+
+	velocity = velocity.normalized() * SPEED
+
+	if Input.is_action_pressed("ui_shift"):
+		velocity *= sprint_multiplier
+
+		
 	# Check against camera boundaries
 	var next_position = position + velocity * delta
 	if next_position.x < $Camera2D.limit_left:
@@ -32,7 +39,6 @@ func _process(delta):
 	elif next_position.y > $Camera2D.limit_bottom:
 		velocity.y -= 1
 		
-	velocity = velocity.normalized() * SPEED
 	move_and_slide()
 
 #func _physics_process(delta):
